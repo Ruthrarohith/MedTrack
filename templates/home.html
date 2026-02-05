@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div
+    style="min-height: 80vh; display: flex; align-items: center; justify-content: center; background: #f3f4f6; padding: 2rem;">
+
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; width: 100%;">
+
+        <!-- Card 1: For Patients -->
+        <a href="{{ url_for('login') }}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; padding: 3rem 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; height: 100%; transition: transform 0.2s; cursor: pointer;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div
+                    style="width: 60px; height: 60px; background: #0284c7; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                    <i class="fas fa-user-injured" style="color: white; font-size: 2rem;"></i>
+                </div>
+                <h3 style="color: #111827; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">For Patients</h3>
+                <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">
+                    Track your health journey, upload reports securely, and book appointments with ease.
+                </p>
+            </div>
+        </a>
+
+        <!-- Card 2: For Doctors -->
+        <a href="{{ url_for('login') }}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; padding: 3rem 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; height: 100%; transition: transform 0.2s; cursor: pointer;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div
+                    style="width: 60px; height: 60px; background: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                    <i class="fas fa-user-md" style="color: white; font-size: 2rem;"></i>
+                </div>
+                <h3 style="color: #111827; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">For Doctors</h3>
+                <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">
+                    Manage patient records, review AI-assisted diagnostics, and streamline your workflow.
+                </p>
+            </div>
+        </a>
+
+        <!-- Card 3: AI Powered -->
+        <a href="{{ url_for('about') }}" style="text-decoration: none; color: inherit;">
+            <div style="background: white; padding: 3rem 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; height: 100%; transition: transform 0.2s; cursor: pointer;"
+                onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div
+                    style="width: 60px; height: 60px; background: #0284c7; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                    <i class="fas fa-brain" style="color: white; font-size: 2rem;"></i>
+                </div>
+                <h3 style="color: #111827; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">AI Powered</h3>
+                <p style="color: #6b7280; font-size: 1rem; line-height: 1.6;">
+                    Leverage cutting-edge AI analysis for preliminary report insights and health tracking.
+                </p>
+            </div>
+        </a>
+
+    </div>
+</div>
+{% endblock %}
