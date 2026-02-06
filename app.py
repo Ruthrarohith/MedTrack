@@ -21,7 +21,7 @@ doctor_table = dynamodb.Table('DoctorUser')
 medtrack_data_table = dynamodb.Table('Medtrack_data')
 
 # SNS Topic ARN (UPDATED to match region)
-SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:925271161974:Medtrack'
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:615299730511:Medtrack'
 
 app = Flask(__name__)
 app.secret_key = 'supersecuritykey_medtrack_dev' # Use env var in production

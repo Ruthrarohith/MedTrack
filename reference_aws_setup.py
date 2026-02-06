@@ -23,7 +23,7 @@ def setup_resources():
     except (ClientError, Exception) as e:
         print(f"[Info] Could not connect to AWS (No Credentials found).")
         print(f"       Switching to REFERENCE MODE (Simulated Output)")
-        topic_arn = "arn:aws:sns:us-east-1:925271161974:Medtrack"
+        topic_arn = "arn:aws:sns:us-east-1:615299730511:Medtrack"
         print(f"[OK] SNS Topic Created! (Simulated)")
         print(f"   Topic ARN: {topic_arn}")
         
