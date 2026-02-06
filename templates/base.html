@@ -34,7 +34,7 @@
       <a href="{{ url_for('index') }}">Home</a>
       <a href="{{ url_for('about') }}">About</a>
 
-      {% if session.get('user_role') == 'patient' %}
+      {% if current_role == 'patient' %}
       <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
       <a href="{{ url_for('patient_assistant') }}">AI Companion</a>
       <a href="{{ url_for('patient_chat') }}">Chat</a>
@@ -45,7 +45,7 @@
       <button onclick="toggleEmergency()" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
         <i class="fas fa-ambulance"></i> SOS
       </button>
-      {% elif session.get('user_role') == 'doctor' %}
+      {% elif current_role == 'doctor' %}
       <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
       <a href="{{ url_for('doctor_chat_view') }}">Messages</a>
       {% endif %}
