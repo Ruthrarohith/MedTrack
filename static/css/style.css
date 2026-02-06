@@ -39,15 +39,18 @@ body {
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     box-shadow: var(--glass-shadow);
+    border-top: 4px solid var(--primary);
+    /* Infuse Green Top Border */
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    /* Subtle green border */
     border-radius: 12px;
     padding: 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     color: var(--text-dark);
 }
 
@@ -56,6 +59,8 @@ body {
     box-shadow: 0 10px 20px rgba(16, 185, 129, 0.15);
     /* Green shadow clue */
     border-color: var(--primary);
+    background: rgba(240, 253, 244, 0.8);
+    /* Light green tint on hover */
 }
 
 /* Layout */
