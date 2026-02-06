@@ -278,14 +278,31 @@
                                 </a>
 
                                 {% if appt.status == 'BOOKED' %}
+                                <!-- Confirm Button -->
                                 <a href="{{ url_for('advance_status', appt_id=appt.appointment_id) }}"
                                     style="background: #10b981; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
-                                    <i class="fas fa-check-circle"></i> Check In
+                                    <i class="fas fa-check"></i> Confirm
+                                </a>
+                                <!-- Reschedule Form (Tiny) -->
+                                <form action="{{ url_for('reschedule_appointment', appt_id=appt.appointment_id) }}"
+                                    method="POST" style="display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <input type="datetime-local" name="new_date" required
+                                        style="padding: 0.3rem; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; width: 130px;">
+                                    <button type="submit"
+                                        style="background: #6366f1; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem;"
+                                        title="Reschedule">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </button>
+                                </form>
+                                {% elif appt.status == 'CONFIRMED' %}
+                                <a href="{{ url_for('advance_status', appt_id=appt.appointment_id) }}"
+                                    style="background: #2563eb; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                    <i class="fas fa-stethoscope"></i> Check In
                                 </a>
                                 {% elif appt.status == 'CHECKED-IN' %}
                                 <a href="{{ url_for('advance_status', appt_id=appt.appointment_id) }}"
                                     style="background: #2563eb; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
-                                    <i class="fas fa-stethoscope"></i> Start Consult
+                                    <i class="fas fa-user-md"></i> Start Consult
                                 </a>
                                 {% elif appt.status == 'CONSULTING' %}
                                 <a href="{{ url_for('advance_status', appt_id=appt.appointment_id) }}"

@@ -1281,6 +1281,40 @@ def add_medical_history():
             
     return redirect(url_for('patient_dashboard'))
 
+@app.route('/doctor/reschedule/<appt_id>', methods=['POST'])
+def reschedule_appointment(appt_id):
+    if session.get('role') != 'doctor':
+        flash('Unauthorized', 'error')
+        return redirect(url_for('login'))
+        
+    try:
+        new_date = request.form.get('new_date')
+        if not new_date:
+            flash('Please select a new date', 'warning')
+            return redirect(url_for('doctor_dashboard'))
+            
+        # Update date and reset status to CONFIRMED
+        appointments_table.update_item(
+            Key={'appointment_id': appt_id},
+            UpdateExpression='SET appointment_date = :d, #s = :s',
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={
+                ':d': new_date,
+                ':s': 'CONFIRMED'
+            }
+        )
+        
+        # Notify
+        # (Assuming notify_appointment_status_change helper exists and works)
+        
+        flash('Appointment rescheduled successfully', 'success')
+        
+    except Exception as e:
+        logger.error(f"Error rescheduling: {e}")
+        flash('Error rescheduling appointment', 'error')
+        
+    return redirect(url_for('doctor_dashboard'))
+
 @app.route('/advance_status/<appt_id>')
 def advance_status(appt_id):
     """Advance appointment status and auto-generate invoice on completion"""
@@ -1300,7 +1334,8 @@ def advance_status(appt_id):
         
         # Define status progression
         status_flow = {
-            'BOOKED': 'CHECKED-IN',
+            'BOOKED': 'CONFIRMED',
+            'CONFIRMED': 'CHECKED-IN',
             'CHECKED-IN': 'CONSULTING',
             'CONSULTING': 'COMPLETED'
         }
