@@ -97,6 +97,14 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+# --- AI Route (Moved for Fix) ---
+@app.route('/ai/dashboard')
+def ai_dashboard():
+    if 'user_id' not in session:
+        flash('Please login to access AI features', 'warning')
+        return redirect(url_for('login'))
+    return render_template('ai/dashboard.html')
+
 import re
 
 def validate_password(password):
@@ -608,13 +616,6 @@ def doctor_dashboard():
                                "today_appts": today_count
                            },
                            next_patient=next_patient_details)
-
-@app.route('/ai/dashboard')
-def ai_dashboard():
-    if 'user_id' not in session:
-        flash('Please login to access AI features', 'warning')
-        return redirect(url_for('login'))
-    return render_template('ai/dashboard.html')
 
 @app.route('/doctor/my_appointments')
 @login_required
