@@ -14,7 +14,9 @@
     <div class="login-container">
         <div class="login-left glass-panel">
             <div class="login-form-box">
-                <h1 class="text-gradient" style="margin-bottom: 0.5rem;">Medtrack.</h1>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <img src="{{ url_for('static', filename='medtrack_logo.png') }}" alt="Medtrack Logo" style="height: 80px; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));">
+                </div>
                 <p style="color: #6b7280; margin-bottom: 2rem;">Patient Journey Management System</p>
 
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -29,13 +31,12 @@
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
                         <input type="email" name="email" class="form-input" placeholder="e.g. patient@example.com"
-                            required value="patient@example.com">
+                            required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-input" placeholder="••••••••" required
-                            value="password123">
+                        <input type="password" name="password" class="form-input" placeholder="••••••••" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
@@ -47,11 +48,7 @@
                         </a>
                     </div>
 
-                    <div style="margin-top: 1.5rem; font-size: 0.9rem; color: #6b7280; text-align: center;">
-                        <p><strong>Demo Credentials:</strong></p>
-                        <p>Patient: patient@example.com / password123</p>
-                        <p>Doctor: doctor@example.com / password123</p>
-                    </div>
+                        <p>Welcome back to the future of healthcare.</p>
                 </form>
                 </form>
 

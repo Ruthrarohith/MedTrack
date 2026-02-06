@@ -97,6 +97,67 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+import re
+
+def validate_password(password):
+    """
+    Validate password complexity:
+    - At least 8 characters
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one number
+    - At least one special character
+    """
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not re.search(r"[a-z]", password):
+        return False, "Password must contain at least one lowercase letter."
+    if not re.search(r"[A-Z]", password):
+        return False, "Password must contain at least one uppercase letter."
+    if not re.search(r"\d", password):
+        return False, "Password must contain at least one number."
+    if not re.search(r"[@$!%*?&]", password):
+        return False, "Password must contain at least one special character (@$!%*?&)."
+    return True, ""
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Passwords do not match.', 'error')
+            return render_template('signup.html')
+            
+        is_valid, msg = validate_password(password)
+        if not is_valid:
+            flash(msg, 'error')
+            return render_template('signup.html')
+            
+        # Create Patient via AWS Setup Logic (using database adapter in reality, but here we can simulate or call direct)
+        # Assuming database.create_patient exists or we use aws_setup logic.
+        # But wait, app.py imports database_dynamo as database.
+        # database_dynamo.py DOES NOT HAVE create_patient. 
+        # It relies on aws_setup.py to Create Table, but inserting a user?
+        # database_dynamo.py has `get_user` but no `create_user`.
+        # I need to IMPLEMENT create_patient in database_dynamo.py or call aws_setup logic.
+        # aws_setup logic is a script, not a module typically imported by app.py (circular deps risk).
+        # Best to add create_patient to database_dynamo.py
+        
+        # Checking database.py... it has create_patient? No I checked database_dynamo.py.
+        # I will implement a quick create_patient in database_dynamo.py in the next step.
+        
+        if database.create_patient(email, password, name):
+             flash('Account created successfully! Please login.', 'success')
+             return redirect(url_for('login'))
+        else:
+             flash('Account creation failed. Email might be taken.', 'error')
+             
+    return render_template('signup.html')
+
 # --- Admin Routes ---
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():

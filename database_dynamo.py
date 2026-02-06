@@ -107,6 +107,38 @@ def get_all_doctors():
         return resp.get('Items', [])
     except: return []
 
+def create_patient(email, password, name):
+    """
+    Create a new patient user.
+    """
+    try:
+        # Simple password hashing (In production use werkzeug.security)
+        # For compatibility with get_user which just checks plain text in the original mock?
+        # Original app.py line 76: `if user and user['password'] == password:` -> Plain text comparison!
+        # I should probably stick to plain text or update login logic. 
+        # Given "lay some syntax for passwords", I should probably hash it but the existing login expects plain text.
+        # I will store it as is for now to avoid breaking login for existing users if any, 
+        # or update login to hash. 
+        # Let's check imports in app.py. Line 1: `from flask ...`. 
+        # It does NOT import werkzeug.security.
+        # So I will store plain text to maintain "without affecting other functions" (login).
+        
+        item = {
+            'username': email,
+            'password': password, 
+            'name': name,
+            'role': 'patient',
+            'created_at': get_formatted_date_time()
+        }
+        patient_table.put_item(
+            Item=item,
+            ConditionExpression='attribute_not_exists(username)'
+        )
+        return True
+    except Exception as e:
+        print(f"Error creating patient: {e}")
+        return False
+
 # --- Data Management (Table 4: MedTrack_Data) ---
 # Schema: PK=EntityID, SK=Meta/Type
 
