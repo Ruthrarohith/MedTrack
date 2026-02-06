@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medtrack | {% block title %}Patient Journey System{% endblock %}</title>
+  <title>MedTrack | {% block title %}Patient Journey System{% endblock %}</title>
 
   <!-- Google Fonts: Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,7 @@
     <div class="logo">
       <a href="{{ url_for('index') }}"
         style="display: flex; align-items: center; gap: 0.75rem; color: inherit; text-decoration: none;">
-        <img src="{{ url_for('static', filename='medtrack_logo.png') }}" alt="Medtrack" style="height: 32px;">
+        <img src="{{ url_for('static', filename='medtrack_logo.png') }}" alt="MedTrack" style="height: 32px;">
         <span>MedTrack</span>
       </a>
     </div>
@@ -34,7 +34,7 @@
       <a href="{{ url_for('index') }}">Home</a>
       <a href="{{ url_for('about') }}">About</a>
 
-      {% if current_role == 'patient' %}
+      {% if session.get('user_role') == 'patient' %}
       <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
       <a href="{{ url_for('patient_assistant') }}">AI Companion</a>
       <a href="{{ url_for('patient_chat') }}">Chat</a>
@@ -45,15 +45,15 @@
       <button onclick="toggleEmergency()" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
         <i class="fas fa-ambulance"></i> SOS
       </button>
-      {% elif current_role == 'doctor' %}
+      {% elif session.get('user_role') == 'doctor' %}
       <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('doctor_chat_view') }}">Comm Center</a>
+      <a href="{{ url_for('doctor_chat_view') }}">Messages</a>
       {% endif %}
 
-      {% if current_user %}
+      {% if session.get('user_id') %}
       <span
         style="display: flex; align-items: center; background: rgba(13, 148, 136, 0.1); padding: 0.2rem 0.8rem; border-radius: 2rem; color: var(--primary-color);">
-        <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i> {{ current_user }}
+        <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i> {{ session.get('user_name') }}
       </span>
       <a href="{{ url_for('logout') }}" class="btn-secondary"
         style="padding: 0.5rem 1rem; font-size: 0.9rem;">Logout</a>
@@ -86,7 +86,7 @@
 
   <!-- Footer -->
   <footer>
-    <p>&copy; 2024 MedTrack. All rights reserved.</p>
+    <p>&copy; 2026 MedTrack. All rights reserved.</p>
   </footer>
 
   <!-- Emergency Modal -->
