@@ -74,15 +74,20 @@
 
                     <!-- Status & Action -->
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                        {% if appt.status == 'CHECKED-IN' %}
+                        {% if appt.status == 'PENDING' %}
+                        <span
+                            style="background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                            <i class="fas fa-clock" style="font-size: 0.5rem;"></i> Awaiting Confirmation
+                        </span>
+                        {% elif appt.status == 'CONFIRMED' %}
+                        <span
+                            style="background: #d1fae5; color: #059669; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                            <i class="fas fa-check-circle" style="font-size: 0.5rem;"></i> Confirmed
+                        </span>
+                        {% elif appt.status == 'CHECKED-IN' %}
                         <span
                             style="background: #fef3c7; color: #d97706; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
-                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Check-In
-                        </span>
-                        {% elif appt.status == 'BOOKED' %}
-                        <span
-                            style="background: #dbeafe; color: #2563eb; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
-                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Booked
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Checked-In
                         </span>
                         {% elif appt.status == 'CONSULTING' %}
                         <span
@@ -91,7 +96,7 @@
                         </span>
                         {% else %}
                         <span
-                            style="background: #d1fae5; color: #059669; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                            style="background: #e5e7eb; color: #4b5563; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
                             <i class="fas fa-circle" style="font-size: 0.5rem;"></i> {{ appt.status }}
                         </span>
                         {% endif %}

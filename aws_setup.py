@@ -456,7 +456,7 @@ def get_all_doctors():
 # ============================================
 
 def create_appointment(patient_email, doctor_email, appointment_date, symptoms, priority='normal'):
-    """Create appointment in DynamoDB"""
+    """Create appointment REQUEST in DynamoDB - awaiting doctor confirmation"""
     try:
         appointment_id = generate_id("APPT")
         
@@ -464,10 +464,11 @@ def create_appointment(patient_email, doctor_email, appointment_date, symptoms, 
             'appointment_id': appointment_id,
             'patient_email': patient_email,
             'doctor_email': doctor_email,
-            'appointment_date': appointment_date,
+            'requested_date': appointment_date,  # Patient's preferred time
+            'appointment_date': appointment_date,  # Will be finalized by doctor
             'symptoms': symptoms or '',
             'priority': priority,
-            'status': 'BOOKED',
+            'status': 'PENDING',  # Changed from BOOKED - awaiting doctor confirmation
             'diagnosis': '',
             'prescription': '',
             'created_at': get_current_datetime(),
@@ -483,21 +484,13 @@ def create_appointment(patient_email, doctor_email, appointment_date, symptoms, 
         patient_name = patient.get('name', patient_email) if patient else patient_email
         doctor_name = doctor.get('name', doctor_email) if doctor else doctor_email
         
-        # Send notification
+        # Send notification to DOCTOR (not patient yet - they need to confirm first!)
         send_notification(
-            f"New appointment booked by {patient_name} with Dr. {doctor_name} on {appointment_date}",
-            "New Appointment Booked"
+            f"New appointment REQUEST from {patient_name} for {appointment_date}. Please confirm or reschedule.",
+            "New Appointment Request"
         )
         
-        # Send patient tracking notification
-        notify_appointment_status_change(
-            patient_email=patient_email,
-            status='BOOKED',
-            appointment_id=appointment_id,
-            doctor_name=doctor_name
-        )
-        
-        logger.info(f"Appointment created: {appointment_id}")
+        logger.info(f"Appointment request created: {appointment_id}")
         return appointment_id
     except ClientError as e:
         logger.error(f"Error creating appointment: {e}")
@@ -1283,6 +1276,7 @@ def add_medical_history():
 
 @app.route('/doctor/reschedule/<appt_id>', methods=['POST'])
 def reschedule_appointment(appt_id):
+    """Doctor reschedules appointment to a different time and confirms it"""
     if session.get('role') != 'doctor':
         flash('Unauthorized', 'error')
         return redirect(url_for('login'))
@@ -1293,21 +1287,29 @@ def reschedule_appointment(appt_id):
             flash('Please select a new date', 'warning')
             return redirect(url_for('doctor_dashboard'))
             
-        # Update date and reset status to CONFIRMED
+        # Update date and CONFIRM the appointment
         appointments_table.update_item(
             Key={'appointment_id': appt_id},
-            UpdateExpression='SET appointment_date = :d, #s = :s',
+            UpdateExpression='SET appointment_date = :d, #s = :s, updated_at = :u',
             ExpressionAttributeNames={'#s': 'status'},
             ExpressionAttributeValues={
                 ':d': new_date,
-                ':s': 'CONFIRMED'
+                ':s': 'CONFIRMED',
+                ':u': get_current_datetime()
             }
         )
         
-        # Notify
-        # (Assuming notify_appointment_status_change helper exists and works)
-        
-        flash('Appointment rescheduled successfully', 'success')
+        # Notify patient of rescheduled time
+        appt = get_appointment(appt_id)
+        if appt:
+            notify_appointment_status_change(
+                patient_email=appt.get('patient_email'),
+                status='RESCHEDULED',
+                appointment_id=appt_id,
+                doctor_name=session.get('user_name', 'Doctor')
+            )
+            
+        flash(f'Appointment rescheduled to {new_date} and confirmed!', 'success')
         
     except Exception as e:
         logger.error(f"Error rescheduling: {e}")
@@ -1334,10 +1336,10 @@ def advance_status(appt_id):
         
         # Define status progression
         status_flow = {
-            'BOOKED': 'CONFIRMED',
-            'CONFIRMED': 'CHECKED-IN',
-            'CHECKED-IN': 'CONSULTING',
-            'CONSULTING': 'COMPLETED'
+            'PENDING': 'CONFIRMED',      # Doctor confirms patient's request
+            'CONFIRMED': 'CHECKED-IN',   # Patient arrives
+            'CHECKED-IN': 'CONSULTING',  # Doctor starts consultation
+            'CONSULTING': 'COMPLETED'    # Consultation done
         }
         
         new_status = status_flow.get(current_status)
@@ -1409,7 +1411,7 @@ def doctor_dashboard():
     
     # Active Queue: Include ALL active appointments regardless of date to ensure no one is missed
     # robust case-insensitive check
-    active_statuses = ['BOOKED', 'CONFIRMED', 'CHECKED-IN', 'CONSULTING']
+    active_statuses = ['PENDING', 'CONFIRMED', 'CHECKED-IN', 'CONSULTING']
     active_queue = [
         a for a in appointments 
         if (a.get('status') or '').upper() in active_statuses
