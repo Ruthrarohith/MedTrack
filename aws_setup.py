@@ -987,6 +987,13 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/ai/dashboard')
+def ai_dashboard():
+    if 'user_id' not in session:
+        flash('Please login to access AI features', 'warning')
+        return redirect(url_for('login'))
+    return render_template('ai/dashboard.html')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
