@@ -1181,7 +1181,8 @@ def patient_dashboard():
     
     # 1. Appointments (Sorted by date, earliest first)
     appointments = get_patient_appointments(user_id)
-    appointments.sort(key=lambda x: x.get('appointment_date') or '', reverse=False)
+    # Convert to string to avoid datetime vs string comparison errors
+    appointments.sort(key=lambda x: str(x.get('appointment_date') or ''), reverse=False)
     print(f"DEBUG: Appointments for {user_id}: {appointments}") 
     
     # Calculate upcoming appointment (First active appointment)
