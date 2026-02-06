@@ -1409,7 +1409,7 @@ def doctor_dashboard():
     
     # Active Queue: Include ALL active appointments regardless of date to ensure no one is missed
     # robust case-insensitive check
-    active_statuses = ['BOOKED', 'CHECKED-IN', 'CONSULTING']
+    active_statuses = ['BOOKED', 'CONFIRMED', 'CHECKED-IN', 'CONSULTING']
     active_queue = [
         a for a in appointments 
         if (a.get('status') or '').upper() in active_statuses
