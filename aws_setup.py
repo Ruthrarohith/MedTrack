@@ -233,6 +233,14 @@ def notify_appointment_status_change(patient_email, status, appointment_id=None,
                 'subject': 'Appointment Confirmed - MedTrack',
                 'message': f'Your appointment has been successfully booked. Appointment ID: {appointment_id or "N/A"}. Please arrive 15 minutes early for check-in.'
             },
+            'CONFIRMED': {
+                'subject': 'Appointment Confirmed by Doctor - MedTrack',
+                'message': f'Great news! {doctor_name or "Your doctor"} has confirmed your appointment (ID: {appointment_id or "N/A"}). Please arrive 15 minutes early for check-in.'
+            },
+            'RESCHEDULED': {
+                'subject': 'Appointment Rescheduled - MedTrack',
+                'message': f'{doctor_name or "Your doctor"} has rescheduled your appointment (ID: {appointment_id or "N/A"}). Please check your dashboard for the new date and time.'
+            },
             'CHECKED-IN': {
                 'subject': 'Checked In - MedTrack',
                 'message': f'You have been checked in for your appointment. Please wait in the designated area. The doctor will see you shortly.'
@@ -1354,13 +1362,26 @@ def advance_status(appt_id):
             # Update status
             appointments_table.update_item(
                 Key={'appointment_id': appt_id},
-                UpdateExpression='SET #s = :status_val',
+                UpdateExpression='SET #s = :status_val, updated_at = :updated',
                 ExpressionAttributeNames={'#s': 'status'},
-                ExpressionAttributeValues={':status_val': new_status}
+                ExpressionAttributeValues={
+                    ':status_val': new_status,
+                    ':updated': get_current_datetime()
+                }
             )
             
+            # Notify patient when doctor confirms appointment
+            if new_status == 'CONFIRMED':
+                notify_appointment_status_change(
+                    patient_email=appt.get('patient_email'),
+                    status='CONFIRMED',
+                    appointment_id=appt_id,
+                    doctor_name=session.get('user_name', 'Doctor')
+                )
+                flash('Appointment confirmed! Patient has been notified.', 'success')
+            
             # If completing appointment, auto-generate invoice
-            if new_status == 'COMPLETED':
+            elif new_status == 'COMPLETED':
                 # Generate random consultation fee (₹500-₹2000)
                 import random
                 consultation_fee = random.randint(500, 2000)
