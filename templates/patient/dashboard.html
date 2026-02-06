@@ -41,10 +41,20 @@
                     <!-- Date Badge -->
                     <div
                         style="background: #3b82f6; color: white; border-radius: 10px; padding: 0.8rem; text-align: center; min-width: 60px;">
-                        <div style="font-size: 1.5rem; font-weight: bold; line-height: 1;">{{
-                            appt.appointment_date[8:10] if appt.appointment_date else '?' }}</div>
-                        <div style="font-size: 0.75rem; opacity: 0.9; text-transform: uppercase;">{{
-                            appt.appointment_date[5:7] if appt.appointment_date else 'N/A' }}</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; line-height: 1;">
+                            {% if appt.appointment_date %}
+                            {{ (appt.appointment_date|string)[8:10] }}
+                            {% else %}
+                            ?
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 0.75rem; opacity: 0.9; text-transform: uppercase;">
+                            {% if appt.appointment_date %}
+                            {{ (appt.appointment_date|string)[5:7] }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </div>
                     </div>
 
                     <!-- Doctor Avatar -->
