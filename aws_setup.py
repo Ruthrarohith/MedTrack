@@ -1412,7 +1412,8 @@ def doctor_dashboard():
     from datetime import timedelta
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     today_str = ist_now.strftime('%Y-%m-%d')
-    today_appointments = [a for a in appointments if (a.get('appointment_date') or '').startswith(today_str)]
+    # Convert appointment_date to string for comparison (handles both datetime and string types)
+    today_appointments = [a for a in appointments if str(a.get('appointment_date') or '').startswith(today_str)]
     
     # Active Queue: Include ALL active appointments regardless of date to ensure no one is missed
     # robust case-insensitive check
@@ -1421,8 +1422,8 @@ def doctor_dashboard():
         a for a in appointments 
         if (a.get('status') or '').upper() in active_statuses
     ]
-    # Sort by time (Oldest first), safely handling None values
-    active_queue.sort(key=lambda x: (x.get('appointment_date') or ''))
+    # Sort by time (Oldest first), safely handling None values and converting to string
+    active_queue.sort(key=lambda x: str(x.get('appointment_date') or ''))
     
     # Calculate stats
     total_patients = len(set(a.get('patient_email') for a in appointments if a.get('patient_email')))
