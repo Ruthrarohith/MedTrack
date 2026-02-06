@@ -1,21 +1,23 @@
 /* CSS Variables & Reset */
 :root {
     --primary: #10b981;
-    /* Light Green /  Emerald-500 */
-    --secondary: #06b6d4;
-    /* Cyan-500 */
+    /* Emerald-500 (Primary Green) */
+    --secondary: #34d399;
+    /* Emerald-400 (Secondary Green/Cyan tint) */
     --accent: #f59e0b;
     /* Amber - for warmth */
     --text-dark: #1f2937;
     /* Gray-900 - readable on light */
     --text-muted: #6b7280;
     /* Gray-500 */
-    --bg-gradient: linear-gradient(135deg, #ecfdf5 0%, #cffafe 100%);
-    /* Pale Green to Pale Cyan */
-    --glass-bg: rgba(255, 255, 255, 0.7);
+    --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+    /* Very light Green gradient */
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    /* More opaque white for better contrast */
     /* White glass */
-    --glass-border: rgba(255, 255, 255, 0.6);
-    --glass-shadow: 0 8px 32px 0 rgba(7, 89, 133, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.1);
+    /* Greenish shadow */
     --font-main: 'Inter', sans-serif;
 }
 
