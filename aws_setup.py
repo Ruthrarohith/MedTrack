@@ -563,16 +563,21 @@ def get_patient_appointments(patient_email):
         # Enrich appointments with details for display
         for appt in appointments:
             # Map time
-            # Map time
             date_val = appt.get('appointment_date')
             appt['time'] = str(date_val).replace('T', ' ') if date_val else 'N/A'
             
-            # Get Doctor Name
+            # Get Doctor Name and Specialization
             if 'doctor_email' in appt:
                 doc = get_doctor(appt['doctor_email'])
-                appt['doctor_name'] = doc.get('name', appt['doctor_email']) if doc else appt['doctor_email']
+                if doc:
+                    appt['doctor_name'] = doc.get('name', appt['doctor_email'])
+                    appt['specialization'] = doc.get('specialization', 'General Practitioner')
+                else:
+                    appt['doctor_name'] = appt['doctor_email']
+                    appt['specialization'] = 'General Practitioner'
             else:
-                 appt['doctor_name'] = 'Unknown Doctor'
+                appt['doctor_name'] = 'Unknown Doctor'
+                appt['specialization'] = 'General Practitioner'
                  
         return sorted(appointments, key=lambda x: x.get('created_at', ''), reverse=True)
     except ClientError as e:
@@ -1524,22 +1529,34 @@ def book_appointment():
         return redirect(url_for('login'))
     
     if request.method == 'POST':
-        doctor_email = request.form.get('doctor_email')
-        appointment_date = request.form.get('appointment_date')
-        symptoms = request.form.get('symptoms')
-        
-        appointment_id = create_appointment(
-            session['user_id'], 
-            doctor_email, 
-            appointment_date, 
-            symptoms
-        )
-        
-        if appointment_id:
-            flash('Appointment booked successfully!', 'success')
-            return redirect(url_for('patient_dashboard'))
-        else:
-            flash('Error booking appointment.', 'error')
+        try:
+            # Extract form data with correct field names
+            doctor_id = request.form.get('doctor_id')  # This is doctor's email
+            appointment_time = request.form.get('time')  # datetime-local input
+            reason = request.form.get('reason', '')  # Reason for visit
+            
+            # Validate required fields
+            if not doctor_id or not appointment_time:
+                flash('Please select a doctor and appointment time.', 'error')
+                return redirect(url_for('book_appointment'))
+            
+            # Create appointment (doctor_id is actually the email)
+            appointment_id = create_appointment(
+                patient_email=session['user_id'],  # Patient's email
+                doctor_email=doctor_id,  # Doctor's email (from form)
+                appointment_date=appointment_time,  # Selected datetime
+                symptoms=reason  # Reason for visit
+            )
+            
+            if appointment_id:
+                flash('Appointment request submitted! Awaiting doctor confirmation.', 'success')
+                return redirect(url_for('patient_dashboard'))
+            else:
+                flash('Error booking appointment. Please try again.', 'error')
+                
+        except Exception as e:
+            logger.error(f"Booking error: {e}")
+            flash('An error occurred while booking. Please try again.', 'error')
     
     
     # Mock Locations for the dropdown
@@ -1585,6 +1602,7 @@ def book_appointment():
     doctors = get_all_doctors()
     # Normalize doctors for the template JS (ensure department key exists)
     for d in doctors:
+        d['id'] = d.get('email', d.get('id', ''))  # Ensure 'id' is set to email
         d['department'] = d.get('specialization', 'General')
         d['availability'] = d.get('status', 'Available')
 

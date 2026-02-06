@@ -57,10 +57,14 @@
                     <div style="flex: 1;">
                         <div style="font-weight: 600; color: #1f2937; margin-bottom: 0.2rem;">
                             {% if appt.appointment_date %}
-                            {{ appt.appointment_date[:10] }} at {{ appt.appointment_date[11:16] if
-                            appt.appointment_date|length > 10 else '10:00' }}
+                            {% set date_str = appt.appointment_date %}
+                            {% if 'T' in date_str %}
+                            {{ date_str.split('T')[0] }} at {{ date_str.split('T')[1][:5] }}
                             {% else %}
-                            Date not set
+                            {{ date_str }}
+                            {% endif %}
+                            {% else %}
+                            <span style="color: #9ca3af;">Date pending confirmation</span>
                             {% endif %}
                         </div>
                         <div style="color: #6b7280; font-size: 0.9rem; margin-bottom: 0.3rem;">
@@ -68,7 +72,14 @@
                         </div>
                         <div
                             style="font-size: 0.85rem; color: #9ca3af; display: flex; align-items: center; gap: 0.3rem;">
-                            <i class="far fa-clock"></i> Apil now
+                            <i class="far fa-clock"></i>
+                            {% if appt.status == 'PENDING' %}
+                            Awaiting doctor confirmation
+                            {% elif appt.status == 'CONFIRMED' %}
+                            Confirmed
+                            {% else %}
+                            {{ appt.status }}
+                            {% endif %}
                         </div>
                     </div>
 
